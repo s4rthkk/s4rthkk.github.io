@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="dollar.png">
+    <link rel="icon" sizes="32x32" href="dollar.png">
+    <link rel="apple-touch-icon" href="dollar.png">
+    <title>s4rthk - UI/UX Designer and Programmer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Momo+Trust+Display&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&family=Crimson+Pro:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-card: #f0000000;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #636569;
+            --accent-dark: #d4d1a0;
+            --border: rgba(255, 255, 255, 0.1);
+            --accent-dark: color-mix(in srgb, var(--accent) 80%, black);
+            --card-opacity: 0.1;
+        }
+
+        body {
+            font-family: 'Syne', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+            box-shadow: 0 0 10px rgba(232, 229, 181, 0.5);
+        }
+
+        /* Firefox scrollbar */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) var(--bg-primary);
+        }
+
+        /* Boot Screen */
+        #boot-screen {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999999;
+            font-family: monospace;
+        }
+
+        #boot {
+            text-align: center;
+            color: #fff;
+        }
+
+        #loader-line {
+            width: 220px;
+            height: 2px;
+            background: rgba(255,255,255,0.2);
+            margin: 18px auto 12px;
+            overflow: hidden;
+        }
+
+        #loader-fill {
+            height: 100%;
+            width: 0%;
+            background: #fff;
+            animation: loadOnce 2.5s linear forwards;
+        }
+
+        @keyframes loadOnce {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        #boot-text {
+            font-size: 14px;
+            letter-spacing: 2px;
+            opacity: 0.9;
+        }
+
+        /* Animated Background */
+        #bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -3;
+            filter: brightness(0.35) blur(1px);
+        }
+
+        /* Cursor trail effect */
+        .cursor-trail {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* Scroll progress indicator */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            z-index: 10000;
+            transition: width 0.1s ease;
+            box-shadow: 0 0 10px rgba(232, 229, 181, 0.5);
+        }
+
+        /* Loading animation */
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        body {
+            animation: fadeInScale 0.6s ease-out;
+        }
+
+        /* Navbar */
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: transparent;
+            backdrop-filter: blur(20px);
+            border-radius: 50px;
+            padding: 8px;
+            display: flex;
+            gap: 4px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        nav button {
+            background: transparent;
+            color: var(--text-primary);
+            border: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav button.active {
+            background: var(--accent);
+            color: #000;
+            transform: scale(1.02);
+        }
+
+        nav button:not(.active):hover {
+            color: var(--accent);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 120px 20px 60px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Page transitions */
+        .page {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .page.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: rgba(17, 17, 17, var(--card-opacity));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 60px 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg,
+                    transparent 30%,
+                    rgba(232, 229, 181, 0.05) 50%,
+                    transparent 70%);
+            transform: rotate(45deg);
+            animation: cardShine 8s linear infinite;
+        }
+
+        @keyframes cardShine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        .profile-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(232, 229, 181, 0.3);
+            box-shadow: 0 20px 60px rgba(232, 229, 181, 0.15);
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .profile-image {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            border: 3px solid var(--accent);
+            overflow: hidden;
+            animation: float 3s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+            box-shadow:
+                0 0 30px rgba(232, 229, 181, 0.3),
+                0 0 60px rgba(232, 229, 181, 0.1);
+            transition: all 0.5s ease;
+        }
+
+        .profile-image:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow:
+                0 0 40px rgba(232, 229, 181, 0.5),
+                0 0 80px rgba(232, 229, 181, 0.2);
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        h1 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+            font-family: "Momo Trust Display", sans-serif;
+            background: linear-gradient(120deg, var(--accent) 0%, #fff 50%, var(--accent) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+            position: relative;
+        }
+
+        @keyframes shimmer {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 18px;
+            margin-bottom: 35px;
+            font-family: 'JetBrains Mono', monospace;
+            animation: fadeInUp 0.8s ease-out 0.5s both;
+            letter-spacing: 0.5px;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .social-links a {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(232, 229, 181, 0.1);
+            border-radius: 12px;
+            color: var(--accent);
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            font-size: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-links a::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(232, 229, 181, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .social-links a:hover::before {
+            width: 100px;
+            height: 100px;
+        }
+
+        .social-links a:hover {
+            background: var(--accent);
+            color: #000;
+            transform: translateY(-8px) scale(1.15) rotate(5deg);
+            box-shadow: 0 10px 30px rgba(232, 229, 181, 0.4);
+        }
+
+        .social-links i {
+            font-size: 22px;
+            color: var(--accent);
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .social-links a:hover i {
+            color: #000;
+        }
+
+        .social-links a:nth-child(1) {
+            animation: fadeInUp 0.6s ease-out 0.1s both;
+        }
+
+        .social-links a:nth-child(2) {
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        .social-links a:nth-child(3) {
+            animation: fadeInUp 0.6s ease-out 0.3s both;
+        }
+
+        .social-links a:nth-child(4) {
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        .social-links a:nth-child(5) {
+            animation: fadeInUp 0.6s ease-out 0.5s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Portfolio Page */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-card {
+            background: rgba(17, 17, 17, var(--card-opacity));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 35px;
+            animation: slideUp 0.6s ease-out;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .info-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(232, 229, 181, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .info-card:hover::after {
+            opacity: 1;
+        }
+
+        .info-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(232, 229, 181, 0.3);
+            box-shadow: 0 20px 50px rgba(232, 229, 181, 0.1);
+        }
+
+        .info-card:nth-child(2) {
+            animation-delay: 0.1s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-size: 24px;
+            animation: iconPulse 2s ease-in-out infinite;
+            box-shadow: 0 5px 20px rgba(232, 229, 181, 0.4);
+        }
+
+        @keyframes iconPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 5px 20px rgba(232, 229, 181, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 8px 30px rgba(232, 229, 181, 0.6);
+            }
+        }
+
+        .card-title {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .info-item {
+            margin-bottom: 18px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            min-width: 130px;
+        }
+
+        .info-value {
+            color: var(--text-secondary);
+        }
+
+        /* Skills */
+        .skill-item {
+            margin-bottom: 25px;
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .skill-name {
+            font-weight: 500;
+        }
+
+        .skill-percent {
+            color: var(--text-secondary);
+        }
+
+        .skill-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent-dark) 50%, var(--accent) 100%);
+            background-size: 200% 100%;
+            border-radius: 4px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.3) 50%,
+                    transparent 100%);
+            animation: skillShine 2s ease-in-out infinite;
+        }
+
+        @keyframes skillShine {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .skill-progress.animate {
+            width: var(--skill-width);
+        }
+
+        /* Experience */
+        .experience-card {
+            background: rgba(17, 17, 17, var(--card-opacity));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 35px;
+            animation: slideUp 0.6s ease-out 0.2s both;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .experience-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(232, 229, 181, 0.3);
+            box-shadow: 0 20px 50px rgba(232, 229, 181, 0.1);
+        }
+
+        .experience-item {
+            padding: 25px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .experience-item:last-child {
+            border-bottom: none;
+        }
+
+        .experience-item:hover {
+            padding-left: 15px;
+        }
+
+        .experience-bullet {
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px rgba(232, 229, 181, 0.5);
+            animation: bulletPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes bulletPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 10px rgba(232, 229, 181, 0.5);
+            }
+            50% {
+                transform: scale(1.2);
+                box-shadow: 0 0 20px rgba(232, 229, 181, 0.8);
+            }
+        }
+
+        .experience-content {
+            flex: 1;
+        }
+
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .experience-title {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .external-link {
+            font-size: 16px;
+            color: var(--text-secondary);
+            transition: color 0.3s;
+        }
+
+        .experience-title:hover .external-link {
+            color: var(--accent);
+        }
+
+        .experience-date {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .experience-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .experience-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .experience-link:hover .experience-item {
+            cursor: pointer;
+        }
+
+        /* Contact Page */
+        .contact-grid {
+            display: grid;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-card {
+            background: rgba(17, 17, 17, var(--card-opacity));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            animation: slideUp 0.6s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(232, 229, 181, 0.1) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            border-radius: 50%;
+        }
+
+        .contact-card:hover::before {
+            width: 500px;
+            height: 500px;
+        }
+
+        .contact-card:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--accent);
+            box-shadow: 0 20px 60px rgba(232, 229, 181, 0.2);
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .contact-icon i {
+            font-size: 28px;
+            color: #000;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .contact-card:hover .contact-icon i {
+            color: var(--accent);
+        }
+
+        .contact-info {
+            flex: 1;
+        }
+
+        .contact-label {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .contact-value {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        .contact-arrow {
+            font-size: 24px;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover .contact-arrow {
+            color: var(--accent);
+            transform: translateX(5px);
+        }
+
+        .contact-message {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 20px;
+            animation: slideUp 0.6s ease-out 0.2s both;
+        }
+
+        .contact-message p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Typing Animation */
+        .typing-text {
+            font-family: "Momo Trust Display", sans-serif;
+        }
+
+        .cursor {
+            color: var(--accent);
+            margin-left: 4px;
+            font-weight: 800;
+            animation: blinkCursor 1s steps(1) infinite;
+            font-family: "Momo Trust Display", sans-serif;
+            -webkit-text-fill-color: initial;
+            color: var(--accent);
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes blinkCursor {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Override transparent backgrounds */
+        .profile-card,
+        .info-card,
+        .experience-card,
+        .contact-card,
+        .contact-message {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+
+        .profile-card::before,
+        .info-card::after,
+        .contact-card::before {
+            display: none !important;
+        }
+
+        .social-links a {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 100px 15px 40px;
+            }
+
+            nav {
+                top: 15px;
+                padding: 6px;
+            }
+
+            nav button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+
+            .profile-card {
+                padding: 40px 25px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-card {
+                padding: 25px;
+            }
+
+            .card-title {
+                font-size: 24px;
+            }
+
+            .info-label {
+                min-width: 110px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    
+    <!-- AUTO BOOT SCREEN -->
+    <div id="boot-screen">
+        <div id="boot">
+            <div id="loader-line">
+                <div id="loader-fill"></div>
+            </div>
+            <div id="boot-text">booting up...</div>
+        </div>
+    </div>
+
+    <video id="bg-video" autoplay muted loop playsinline>
+        <source src="bg4.mp4" type="video/mp4">
+    </video>
+
+    <audio id="audio" src="song.mp3"></audio>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <button class="nav-btn active" data-page="home">Home</button>
+        <button class="nav-btn" data-page="portfolio">About</button>
+        <button class="nav-btn" data-page="contact">Contact</button>
+    </nav>
+
+    <div class="container">
+        <!-- Home Page -->
+        <div class="page active" id="home">
+            <div class="profile-card">
+                <div class="profile-image">
+                    <img src="pfp.jpg" alt="Profile">
+                </div>
+                <h1>
+                    <span class="typing-text"></span><span class="cursor">|</span>
+                </h1>
+                <p class="subtitle">UI/UX Designer and <br>Web Developer</p>
+    
+                <div class="social-links">
+                    <a href="https://discord.com/users/s4rthkk" target="_blank" title="Discord">
+                        <i class="fa-brands fa-discord"></i>
+                    </a>
+
+                    <a href="https://x.com/_s4rthk" target="_blank" title="X">
+                        <i class="fa-brands fa-x-twitter"></i>
+                    </a>
+
+                    <a href="https://github.com/s4rthkk" target="_blank" title="GitHub">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+
+                    <a href="https://instagram.com/" target="_blank" title="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+
+                    <a href="https://open.spotify.com/user/31bf676yv4x7kiipglrujqvenvti?si=857d34854e6342cf" target="_blank" title="Spotify">
+                        <i class="fa-brands fa-spotify"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Portfolio/About Page -->
+        <div class="page" id="portfolio">
+            <div class="portfolio-grid">
+                <div class="info-card">
+                    <div class="card-header">
+                        <div class="card-icon">👤</div>
+                        <h2 class="card-title">About Me</h2>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Name:</span>
+                        <span class="info-value">Sarthak</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Age:</span>
+                        <span class="info-value">15</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Experience:</span>
+                        <span class="info-value">2+ Years</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Location:</span>
+                        <span class="info-value">New Delhi, India</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Languages:</span>
+                        <span class="info-value">English (Fluent), Hindi (Fluent)</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Interests:</span>
+                        <span class="info-value">Coding, Networking, Sports</span>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="card-header">
+                        <div class="card-icon">⟨⟩</div>
+                        <h2 class="card-title">Skills</h2>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">UI/UX Design</span>
+                            <span class="skill-percent">77%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="--skill-width: 77%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Frontend Development</span>
+                            <span class="skill-percent">88%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="--skill-width: 88%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Backend Development</span>
+                            <span class="skill-percent">64%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="--skill-width: 64%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Other Skills</span>
+                            <span class="skill-percent">66%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="--skill-width: 66%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="experience-card">
+                <div class="card-header">
+                    <div class="card-icon">☰</div>
+                    <h2 class="card-title">Projects:</h2>
+                </div>
+                <a href="https://kruth.netlify.app/" target="_blank" class="experience-link">
+                    <div class="experience-item">
+                        <div class="experience-bullet"></div>
+                        <div class="experience-content">
+                            <div class="experience-header">
+                                <div class="experience-title">
+                                    Kruth Client
+                                    <span class="external-link">↗</span>
+                                </div>
+                                <span class="experience-date">2025 - Present</span>
+                            </div>
+                            <p class="experience-description">
+                                A fast, static website for the Kruth client built with Next.js, showcasing a minimal design and smooth responsiveness.
+                            </p>
+                        </div>
+                    </div>
+                </a>
+                <div class="experience-item">
+                    <div class="experience-bullet"></div>
+                    <div class="experience-content">
+                        <div class="experience-header">
+                            <div class="experience-title">
+                                Stryde Client
+                                <span class="external-link">↗</span>
+                            </div>
+                            <span class="experience-date">2025 - Present</span>
+                        </div>
+                        <p class="experience-description">
+                            A high-quality static website for the Stryde client, showcasing a sleek design and seamless performance.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Page -->
+        <div class="page" id="contact">
+            <div class="contact-grid">
+                <a href="https://discord.com/users/s4rthkk" target="_blank" class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fa-brands fa-discord"></i>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-label">Discord</div>
+                        <div class="contact-value">s4rthkk</div>
+                    </div>
+                    <div class="contact-arrow">↗</div>
+                </a>
+
+                <a href="mailto:s4rthk@gmail.com" class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-label">Email</div>
+                        <div class="contact-value">s4rthk@gmail.com</div>
+                    </div>
+                    <div class="contact-arrow">↗</div>
+                </a>
+            </div>
+
+            <div class="contact-message">
+                <p>Open to new projects, feel free to contact.</p>
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    Mostly online.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/simple-icons@latest/dist/simple-icons.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        const audioEl = document.getElementById("audio");
+        lucide.createIcons();
+
+        // Boot screen functionality
+        function handleBootScreen() {
+            const boot = document.getElementById("boot-screen");
+            if (!boot) return;
+            
+            setTimeout(() => {
+                boot.style.transition = "opacity 0.6s ease";
+                boot.style.opacity = "0";
+
+                setTimeout(() => {
+                    boot.remove();
+                    startMusic();
+                }, 600);
+            }, 2600);
+        }
+
+        handleBootScreen();
+
+        // Music functionality - continuous playback
+        function startMusic() {
+            audioEl.volume = 0.6;
+            audioEl.loop = true;
+            audioEl.play().catch(() => {});
+        }
+
+        // Create floating particles
+        function createParticles() {
+            const particleCount = 30;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.setProperty('--drift', (Math.random() - 0.5) * 100 + 'px');
+                particle.style.animation = `particleFloat ${15 + Math.random() * 20}s linear infinite`;
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                document.body.appendChild(particle);
+            }
+        }
+
+        createParticles();
+
+        // Cursor trail effect
+        let trails = [];
+        const trailCount = 5;
+
+        for (let i = 0; i < trailCount; i++) {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            document.body.appendChild(trail);
+            trails.push({
+                element: trail,
+                x: 0,
+                y: 0,
+                targetX: 0,
+                targetY: 0
+            });
+        }
+
+        let mouseX = 0, mouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateTrails() {
+            trails.forEach((trail, index) => {
+                if (index === 0) {
+                    trail.targetX = mouseX;
+                    trail.targetY = mouseY;
+                } else {
+                    trail.targetX = trails[index - 1].x;
+                    trail.targetY = trails[index - 1].y;
+                }
+
+                trail.x += (trail.targetX - trail.x) * 0.2;
+                trail.y += (trail.targetY - trail.y) * 0.2;
+
+                trail.element.style.left = trail.x + 'px';
+                trail.element.style.top = trail.y + 'px';
+                trail.element.style.opacity = 0.5 - (index * 0.1);
+                trail.element.style.transform = `scale(${1 - index * 0.15})`;
+            });
+
+            requestAnimationFrame(animateTrails);
+        }
+
+        animateTrails();
+
+        // Navigation functionality with smooth transitions
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const pages = document.querySelectorAll('.page');
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetPage = button.getAttribute('data-page');
+
+                // Update active nav button
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                // Smooth page transition
+                const currentPage = document.querySelector('.page.active');
+                const targetPageElement = document.getElementById(targetPage);
+
+                if (currentPage !== targetPageElement) {
+                    // Fade out current page
+                    currentPage.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        currentPage.classList.remove('active');
+                        targetPageElement.classList.add('active');
+                        
+                        // Fade in target page
+                        setTimeout(() => {
+                            targetPageElement.style.opacity = '1';
+                        }, 50);
+                    }, 400);
+
+                    // Animate skill bars when portfolio page is shown
+                    if (targetPage === 'portfolio') {
+                        setTimeout(() => {
+                            const skillBars = document.querySelectorAll('.skill-progress');
+                            skillBars.forEach(bar => {
+                                bar.classList.add('animate');
+                            });
+                        }, 500);
+                    }
+                }
+            });
+        });
+
+        // Experience item hover effect
+        const experienceItems = document.querySelectorAll('.experience-item');
+        experienceItems.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.style.background = 'rgba(232, 229, 181, 0.03)';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.background = 'transparent';
+            });
+        });
+
+        // Add ripple effect to cards
+        function createRipple(event) {
+            const card = event.currentTarget;
+            const ripple = document.createElement('span');
+            const rect = card.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.style.position = 'absolute';
+            ripple.style.borderRadius = '50%';
+            ripple.style.background = 'rgba(232, 229, 181, 0.3)';
+            ripple.style.pointerEvents = 'none';
+            ripple.style.animation = 'rippleEffect 0.6s ease-out';
+
+            card.appendChild(ripple);
+
+            setTimeout(() => ripple.remove(), 600);
+        }
+
+        // Add ripple animation CSS dynamically
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes rippleEffect {
+                from {
+                    transform: scale(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Apply ripple to interactive elements
+        document.querySelectorAll('.info-card, .contact-card, .experience-card').forEach(card => {
+            card.addEventListener('click', createRipple);
+        });
+
+        // Typing animation
+        const typingElement = document.querySelector(".typing-text");
+        if (typingElement) {
+            const nameText = "s4rthk";
+            let charIndex = 0;
+
+            function startTyping() {
+                typingElement.textContent = "";
+                charIndex = 0;
+
+                function typeChar() {
+                    if (charIndex < nameText.length) {
+                        typingElement.textContent += nameText.charAt(charIndex);
+                        charIndex++;
+                        setTimeout(typeChar, 150);
+                    }
+                }
+
+                typeChar();
+            }
+
+            startTyping();
+            setInterval(startTyping, 5000);
+        }
+
+        // Smooth reveal on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for scroll animations
+        document.querySelectorAll('.info-card, .experience-item, .contact-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Scroll progress bar
+        const scrollProgress = document.querySelector('.scroll-progress');
+        window.addEventListener('scroll', () => {
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.pageYOffset / windowHeight) * 100;
+            scrollProgress.style.width = scrolled + '%';
+        });
+    </script>
+    
+</body>
+
+</html>
