@@ -86,28 +86,10 @@
             color: #fff;
         }
 
-        #loader-line {
-            width: 220px;
-            height: 2px;
-            background: rgba(255,255,255,0.2);
-            margin: 18px auto 12px;
-            overflow: hidden;
-        }
-
-        #loader-fill {
-            height: 100%;
-            width: 0%;
-            background: #fff;
-            animation: loadOnce 2.5s linear forwards;
-        }
-
-        @keyframes loadOnce {
-            from { width: 0%; }
-            to { width: 100%; }
-        }
+       
 
         #boot-text {
-            font-size: 14px;
+            font-size: 24px;
             letter-spacing: 2px;
             opacity: 0.9;
         }
@@ -980,18 +962,20 @@
                 min-width: 110px;
             }
         }
+
+        
+        
+        
     </style>
 </head>
 
 <body>
     
     <!-- AUTO BOOT SCREEN -->
-    <div id="boot-screen">
+    <div id="boot-screen" onclick="startMusic(); handleBootScreen();">
         <div id="boot">
-            <div id="loader-line">
-                <div id="loader-fill"></div>
-            </div>
-            <div id="boot-text">booting up...</div>
+            
+            <div id="boot-text">click to enter</div>
         </div>
     </div>
 
@@ -1209,22 +1193,18 @@
         lucide.createIcons();
 
         // Boot screen functionality
-        function handleBootScreen() {
-            const boot = document.getElementById("boot-screen");
-            if (!boot) return;
-            
-            setTimeout(() => {
-                boot.style.transition = "opacity 0.6s ease";
-                boot.style.opacity = "0";
+       function handleBootScreen() {
+    const boot = document.getElementById("boot-screen");
+    if (!boot) return;
 
-                setTimeout(() => {
-                    boot.remove();
-                    startMusic();
-                }, 600);
-            }, 2600);
-        }
+    boot.style.transition = "opacity 0.6s ease";
+    boot.style.opacity = "0";
 
-        handleBootScreen();
+    setTimeout(() => {
+        boot.remove();
+    }, 600);
+}
+
 
         // Music functionality - continuous playback
         function startMusic() {
